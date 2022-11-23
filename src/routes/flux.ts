@@ -20,7 +20,6 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const result = await pb.collection("flux").getOne(req.params.id);
@@ -31,17 +30,17 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-    try {
-        const result = await pb.collection("flux").create(req.body);
+  try {
+    const result = await pb.collection("flux").create(req.body);
     res.status(201).json(result);
-} catch (e) {
+  } catch (e) {
     res.status(500).json({ error: e });
   }
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-    try {
-        await pb.collection("flux").update(req.params.id, req.body);
+  try {
+    await pb.collection("flux").update(req.params.id, req.body);
     res.status(204).json();
   } catch (e) {
     res.status(500).json({ error: e });
@@ -49,14 +48,14 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 router.get("/search/:q", async (req: Request, res: Response) => {
-    try {
-        const result = await pb.collection("flux").getFullList(1000000, {
-            filter: 'name ~ "' + req.params.q + '"'
-        });
-        res.status(200).json(result);
-    } catch (e) {
-        res.status(500).json({ error: e });
-    }
+  try {
+    const result = await pb.collection("flux").getFullList(1000000, {
+      filter: 'name ~ "' + req.params.q + '"',
+    });
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
 });
 
 export default router;
