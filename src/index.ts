@@ -15,6 +15,9 @@ app.use("/flux", fluxRoute);
 import processRoute from "./routes/process";
 app.use("/process", processRoute);
 
+import productRoute from "./routes/product";
+app.use("/product", productRoute);
+
 app.get("/", async (req, res) => {
     res.json({version: "0.0.1"});
 });
