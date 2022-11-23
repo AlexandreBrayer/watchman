@@ -38,6 +38,15 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+router.put("/:id", async (req: Request, res: Response) => {
+  try {
+    await pb.collection("process").update(req.params.id, req.body);
+    res.status(204).json();
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
 router.get("/search/:q", async (req: Request, res: Response) => {
   try {
     const result = await pb.collection("process").getFullList(1000000, {
