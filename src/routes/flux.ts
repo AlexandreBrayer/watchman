@@ -4,7 +4,6 @@ const router = express.Router();
 const PocketBase = require("pocketbase/cjs");
 const pb = new PocketBase(process.env.POCKET_BASE_URL);
 const connect = async () => {
-  console.log("Connecting to PocketBase...");
   await pb.admins.authWithPassword(
     process.env.ADMIN_EMAIL,
     process.env.ADMIN_PASSWORD
@@ -21,16 +20,6 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/search/:q", async (req: Request, res: Response) => {
-    try {
-        const result = await pb.collection("flux").getList(1,50, {
-            filter: 'name ~ "' + req.params.q + '"'
-        });
-        res.status(200).json(result);
-    } catch (e) {
-        res.status(500).json({ error: e });
-    }
-})
 
 router.get("/:id", async (req: Request, res: Response) => {
   try {
@@ -42,21 +31,32 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  try {
-    const result = await pb.collection("flux").create(req.body);
+    try {
+        const result = await pb.collection("flux").create(req.body);
     res.status(201).json(result);
-  } catch (e) {
+} catch (e) {
     res.status(500).json({ error: e });
   }
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-  try {
-    await pb.collection("flux").update(req.params.id, req.body);
+    try {
+        await pb.collection("flux").update(req.params.id, req.body);
     res.status(204).json();
   } catch (e) {
     res.status(500).json({ error: e });
   }
+});
+
+router.get("/search/:q", async (req: Request, res: Response) => {
+    try {
+        const result = await pb.collection("flux").getFullList(1000000, {
+            filter: 'name ~ "' + req.params.q + '"'
+        });
+        res.status(200).json(result);
+    } catch (e) {
+        res.status(500).json({ error: e });
+    }
 });
 
 export default router;
