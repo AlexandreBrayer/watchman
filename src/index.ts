@@ -12,6 +12,9 @@ app.use(cors());
 import fluxRoute from "./routes/flux";
 app.use("/flux", fluxRoute);
 
+import processRoute from "./routes/process";
+app.use("/process", processRoute);
+
 app.get("/", async (req, res) => {
     res.json({version: "0.0.1"});
 });
