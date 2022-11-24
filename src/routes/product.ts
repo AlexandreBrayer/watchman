@@ -38,6 +38,21 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/bulk", async (req: Request, res: Response) => {
+  pb.autoCancellation(false)
+  try {
+    const result = await Promise.all(
+      req.body.map(async (product: any) => {
+        console.log(product);
+        return pb.collection("product").create(product);
+      })
+    );
+    res.status(201).json(result);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
 router.get("/search/:q", async (req: Request, res: Response) => {
   try {
     const result = await pb.collection("product").getFullList(1000000, {
