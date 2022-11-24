@@ -43,7 +43,6 @@ router.post("/bulk", async (req: Request, res: Response) => {
   try {
     const result = await Promise.all(
       req.body.map(async (product: any) => {
-        console.log(product);
         return pb.collection("product").create(product);
       })
     );
