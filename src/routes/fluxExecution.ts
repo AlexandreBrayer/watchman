@@ -25,7 +25,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const core = spawn(python, [path, ...names]);
     
-    res.status(201).json({ message: "FLux Spawned" });
+    res.status(201).json({ message: "Flux Spawned" });
     core.stdout.on("data", (data: any) => {
       console.log(data.toString());
     });
