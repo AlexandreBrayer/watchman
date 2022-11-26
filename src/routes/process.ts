@@ -39,6 +39,8 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/filter", async (req: Request, res: Response) => {
+  const page = req.body.page;
+  const limit = req.body.limit;
   try {
     const filters: any = {};
     for (const key in req.body.filters) {
@@ -52,7 +54,9 @@ router.post("/filter", async (req: Request, res: Response) => {
         filters[key] = req.body.filters[key].value;
       }
     }
-    const result = await Process.find(filters);
+    const result = await Process.find(filters)
+      .skip((page - 1) * limit)
+      .limit(limit);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json({ error: e });
