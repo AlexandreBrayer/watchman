@@ -17,8 +17,8 @@ database.connect();
 import fluxRoute from "./routes/flux";
 app.use("/flux", fluxRoute);
 
-// import processRoute from "./routes/process";
-// app.use("/process", processRoute);
+import processRoute from "./routes/process";
+app.use("/process", processRoute);
 
 // import productRoute from "./routes/product";
 // app.use("/product", productRoute);
