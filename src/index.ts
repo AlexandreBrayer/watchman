@@ -23,8 +23,8 @@ app.use("/process", processRoute);
 import productRoute from "./routes/product";
 app.use("/product", productRoute);
 
-// import fluxExecutionRoute from "./routes/fluxExecution";
-// app.use("/fluxexecution", fluxExecutionRoute);
+import fluxExecutionRoute from "./routes/fluxExecution";
+app.use("/fluxexecution", fluxExecutionRoute);
 
 app.get("/", async (req, res) => {
     res.json({version: "0.0.1"});
