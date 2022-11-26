@@ -20,8 +20,8 @@ app.use("/flux", fluxRoute);
 import processRoute from "./routes/process";
 app.use("/process", processRoute);
 
-// import productRoute from "./routes/product";
-// app.use("/product", productRoute);
+import productRoute from "./routes/product";
+app.use("/product", productRoute);
 
 // import fluxExecutionRoute from "./routes/fluxExecution";
 // app.use("/fluxexecution", fluxExecutionRoute);
