@@ -1,19 +1,10 @@
 import express, { Request, Response } from "express";
 const router = express.Router();
-
-const PocketBase = require("pocketbase/cjs");
-const pb = new PocketBase(process.env.POCKET_BASE_URL);
-const connect = async () => {
-  await pb.admins.authWithPassword(
-    process.env.ADMIN_EMAIL,
-    process.env.ADMIN_PASSWORD
-  );
-};
-connect();
+import Product from "../models/Product";
 
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const result = await pb.collection("product").getOne(req.params.id);
+    const result = await Product.findById(req.params.id);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({ error: "Not found" });
@@ -22,7 +13,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const result = await pb.collection("product").create(req.body);
+    const result = await Product.create(req.body);
     res.status(201).json(result);
   } catch (e) {
     res.status(500).json({ error: e });
@@ -30,13 +21,8 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.post("/bulk", async (req: Request, res: Response) => {
-  pb.autoCancellation(false);
   try {
-    const result = await Promise.all(
-      req.body.map(async (product: any) => {
-        return pb.collection("product").create(product);
-      })
-    );
+    const result = await Product.insertMany(req.body);
     res.status(201).json(result);
   } catch (e) {
     res.status(500).json({ error: e });
@@ -44,10 +30,24 @@ router.post("/bulk", async (req: Request, res: Response) => {
 });
 
 router.post("/filter", async (req: Request, res: Response) => {
+  const page = req.body.page;
+  const limit = req.body.limit;
   try {
-    const result = await pb
-      .collection("product")
-      .getList(req.body.page, req.body.limit || 20, req.body.params);
+    const filters: any = {};
+    for (const key in req.body.filters) {
+      if (
+        typeof req.body.filters[key].value === "string" &&
+        req.body.filters[key].strict === false
+      ) {
+        const regexValue = new RegExp(req.body.filters[key].value, "i");
+        filters[key] = regexValue;
+      } else {
+        filters[key] = req.body.filters[key].value;
+      }
+    }
+    const result = await Product.find(filters)
+      .skip((page - 1) * limit)
+      .limit(limit);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json({ error: e });
