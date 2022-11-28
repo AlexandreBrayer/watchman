@@ -4,7 +4,8 @@ import Product from "../models/Product";
 
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const result = await Product.findById(req.params.id);
+    const result = await Product.findById(req.params.id)
+    .populate("from");
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({ error: "Not found" });
@@ -47,7 +48,8 @@ router.post("/filter", async (req: Request, res: Response) => {
     }
     const result = await Product.find(filters)
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .select("-__v -desc -from");
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json({ error: e });
