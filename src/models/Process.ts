@@ -14,9 +14,6 @@ const ProcessModel = new Schema<IProcess>({
         ref: "Flux",
     }
 })
-  .set("toJSON", {
-    virtuals: true,
-  })
   .set("timestamps", true);
 
 export default model("Process", ProcessModel);

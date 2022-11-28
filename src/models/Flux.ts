@@ -12,9 +12,6 @@ const FluxModel = new Schema<IFlux>({
     default: false,
   },
 })
-  .set("toJSON", {
-    virtuals: true,
-  })
   .set("timestamps", true);
 
 export default model("FLux", FluxModel);

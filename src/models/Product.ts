@@ -46,9 +46,6 @@ const ProductModel = new Schema<IProduct>({
     required: false,
   },
 })
-  .set("toJSON", {
-    virtuals: true,
-  })
   .set("timestamps", true);
 
 export default model("Product", ProductModel);
