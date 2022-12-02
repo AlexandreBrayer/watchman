@@ -16,14 +16,19 @@ router.post("/", async (req: Request, res: Response) => {
     const core = spawn(python, [path, ...processIds]);
 
     res.status(201).json({ message: "Flux Spawned" });
-    
+
     core.stdout.on("data", async (data: any) => {
       buffer.push(data.toString());
     });
     core.stdout.on("end", async () => {
       const result = buffer.join("");
-        const products = JSON.parse(result);
-        await Product.insertMany(products);
+      const products = JSON.parse(result);
+      await Product.insertMany(products);
+    });
+    core.stderr.on("data", (data: any) => {
+        if (process.env.STDERR_ON === "1") {
+            console.log("error", data.toString());
+        }
     });
   } catch (e) {
     res.status(500).json({ error: e });
