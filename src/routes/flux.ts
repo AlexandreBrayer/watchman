@@ -1,11 +1,18 @@
 import express, { Request, Response } from "express";
 const router = express.Router();
 import Flux from "../models/Flux";
+import Process from "../models/Process";
 
 router.get("/", async (req: Request, res: Response) => {
   try {
     const result = await Flux.find();
-    res.status(200).json(result);
+        const fluxes = await Promise.all(
+        result.map(async (flux: any) => {
+            const processes = await Process.find({ flux: flux.id });
+            return { ...flux._doc, processes };
+        })
+    );
+    res.status(200).json(fluxes);
   } catch (e) {
     res.status(500).json({ error: e });
   }
