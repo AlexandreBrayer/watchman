@@ -26,13 +26,67 @@ router.post("/", async (req: Request, res: Response) => {
       await Product.insertMany(products);
     });
     core.stderr.on("data", (data: any) => {
-        if (process.env.STDERR_ON === "1") {
-            console.log("error", data.toString());
-        }
+      if (process.env.STDERR_ON === "1") {
+        console.log("error", data.toString());
+      }
     });
   } catch (e) {
     res.status(500).json({ error: e });
   }
 });
+
+let clients: any = [];
+let facts: any = [];
+function eventsHandler(request: Request, response: Response) {
+  const headers = {
+    "Content-Type": "text/event-stream",
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache",
+  };
+  response.writeHead(200, headers);
+
+  // disable ts
+  /* @ts-ignore */
+  const data = `data: ${JSON.stringify(facts)}\n\n`;
+
+  response.write(data);
+
+  const clientId = Date.now();
+
+  const newClient = {
+    id: clientId,
+    response,
+  };
+
+  clients.push(newClient);
+
+  request.on("close", () => {
+    console.log(`${clientId} Connection closed`);
+    // disable ts
+    /* @ts-ignore */
+    clients = clients.filter((client) => client.id !== clientId);
+  });
+}
+
+router.get("/events", eventsHandler);
+
+function sendEventsToAll(newFact: any) {
+  clients.forEach((client: { response: { write: (arg0: string) => any } }) =>
+    client.response.write(`data: ${JSON.stringify(newFact)}\n\n`)
+  );
+}
+
+async function addFact(
+  request: { body: any },
+  respsonse: { json: (arg0: any) => void },
+  next: any
+) {
+  const newFact = request.body;
+  facts.push(newFact);
+  respsonse.json(newFact);
+  return sendEventsToAll(newFact);
+}
+
+router.post("/fact", addFact);
 
 export default router;
