@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { Stream } from "stream";
 const router = express.Router();
 const spawn = require("child_process").spawn;
 
@@ -17,7 +18,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(201).json({ message: "Flux Spawned" });
 
-    core.stdout.on("data", async (data: any) => {
+    core.stdout.on("data", async (data: Stream) => {
       buffer.push(data.toString());
     });
     core.stdout.on("end", async () => {
@@ -25,7 +26,7 @@ router.post("/", async (req: Request, res: Response) => {
       const products = JSON.parse(result);
       await Product.insertMany(products);
     });
-    core.stderr.on("data", (data: any) => {
+    core.stderr.on("data", (data: Stream) => {
         if (process.env.STDERR_ON === "1") {
             console.log("error", data.toString());
         }
