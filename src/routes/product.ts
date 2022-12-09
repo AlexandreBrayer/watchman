@@ -34,25 +34,29 @@ router.post("/filter", async (req: Request, res: Response) => {
   const page = req.body.page;
   const limit = req.body.limit;
   try {
-    const filters: any = {};
-    for (const key in req.body.filters) {
+      const filters: any = {};
+      const bodyFilters = req.body.filters.filters;
+    for (const key in bodyFilters) {
       if (
-        typeof req.body.filters[key].value === "string" &&
-        req.body.filters[key].strict === false
+        typeof bodyFilters[key].value === "string" &&
+        bodyFilters[key].strict === false
       ) {
-        const regexValue = new RegExp(req.body.filters[key].value, "i");
+        const regexValue = new RegExp(bodyFilters[key].value, "i");
         filters[key] = regexValue;
       } else {
-        filters[key] = req.body.filters[key].value;
+        filters[key] = bodyFilters[key].value;
       }
     }
     const result = await Product.find(filters)
       .skip((page - 1) * limit)
       .limit(limit)
-      .select("-__v -desc -from");
+      .sort(req.body.filters.sortBy)
+      .select("-__v -desc -from")
+      .exec();
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json({ error: e });
+    console.log(e);
   }
 });
 
