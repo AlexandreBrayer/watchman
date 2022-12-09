@@ -24,12 +24,16 @@ router.post("/", async (req: Request, res: Response) => {
     core.stdout.on("end", async () => {
       const result = buffer.join("");
       const products = JSON.parse(result);
-      await Product.insertMany(products);
+      try {
+        await Product.insertMany(products);
+      } catch (e) {
+        console.log(e);
+      }
     });
     core.stderr.on("data", (data: Stream) => {
-        if (process.env.STDERR_ON === "1") {
-            console.log("error", data.toString());
-        }
+      if (process.env.STDERR_ON === "1") {
+        console.log("error", data.toString());
+      }
     });
   } catch (e) {
     res.status(500).json({ error: e });
