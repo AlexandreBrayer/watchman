@@ -35,7 +35,7 @@ router.post("/filter", async (req: Request, res: Response) => {
   const limit = req.body.limit;
   try {
       const filters: any = {};
-      const bodyFilters = req.body.filters.filters;
+      const bodyFilters = req.body.filters;
     for (const key in bodyFilters) {
       if (
         typeof bodyFilters[key].value === "string" &&
@@ -47,10 +47,17 @@ router.post("/filter", async (req: Request, res: Response) => {
         filters[key] = bodyFilters[key].value;
       }
     }
+    if (req.body.dateBarrier.use) {
+        if (req.body.dateBarrier.after) {
+            filters.createdAt = { $gte: req.body.dateBarrier.value };
+        } else {
+            filters.createdAt = { $lte: req.body.dateBarrier.value };
+        }
+    }
     const result = await Product.find(filters)
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort(req.body.filters.sortBy)
+      .sort(req.body.sortBy)
       .select("-__v -desc -from")
       .exec();
     res.status(200).json(result);
