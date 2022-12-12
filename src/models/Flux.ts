@@ -14,4 +14,4 @@ const FluxModel = new Schema<IFlux>({
 })
   .set("timestamps", true);
 
-export default model("FLux", FluxModel);
+export default model("Flux", FluxModel);
