@@ -6,18 +6,12 @@ const spawn = require("child_process").spawn;
 import Process from "../models/Process";
 import Product from "../models/Product";
 
-router.post("/", async (req: Request, res: Response) => {
+async function spawnProcess(processId: String) {
+  const python = process.env.PYTHON_PATH;
+  const path = process.env.WATCHMAN_CORE_PATH;
   try {
-    const python = process.env.PYTHON_PATH;
-    const path = process.env.WATCHMAN_CORE_PATH;
-    const fluxid = req.body.id;
-    const processes = await Process.find({ flux: fluxid });
-    const processIds = processes.map((p: any) => p.id);
+    const core = spawn(python, [path, processId]);
     var buffer: Array<String> = [];
-    const core = spawn(python, [path, ...processIds]);
-
-    res.status(201).json({ message: "Flux Spawned" });
-
     core.stdout.on("data", async (data: Stream) => {
       buffer.push(data.toString());
     });
@@ -35,6 +29,21 @@ router.post("/", async (req: Request, res: Response) => {
         console.log("error", data.toString());
       }
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+router.post("/", async (req: Request, res: Response) => {
+  try {
+    const fluxid = req.body.id;
+    const processes = await Process.find({ flux: fluxid });
+    var processIds = processes.map((p: any) => p.id);
+    res.status(201).json({ message: "Flux Spawned" });
+
+    while (processIds.length > 0) {
+      const processId = processIds.shift();
+      await spawnProcess(processId);
+    }
   } catch (e) {
     res.status(500).json({ error: e });
   }
