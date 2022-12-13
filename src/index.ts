@@ -26,6 +26,9 @@ app.use("/product", productRoute);
 import fluxExecutionRoute from "./routes/fluxExecution";
 app.use("/fluxexecution", fluxExecutionRoute);
 
+import exportAsCsvRoute from "./routes/exportAsCsv";
+app.use("/export", exportAsCsvRoute);
+
 app.get("/", async (req, res) => {
     res.json({version: "0.0.1"});
 });
