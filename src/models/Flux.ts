@@ -11,7 +11,11 @@ const FluxModel = new Schema<IFlux>({
     required: false,
     default: false,
   },
-})
-  .set("timestamps", true);
+  state: {
+    type: String,
+    required: false,
+    default: "ready",
+  },
+}).set("timestamps", true);
 
 export default model("Flux", FluxModel);
