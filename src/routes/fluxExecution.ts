@@ -57,6 +57,7 @@ router.post("/", async (req: Request, res: Response) => {
       await spawnProcess(processId);
     }
     flux.state = "ready";
+    await flux.save();
   } catch (e) {
     res.status(500).json({ error: e });
   }
