@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 const router = express.Router();
 import Product from "../models/Product";
+import { parseFilters } from "../lib/Filters";
 
 router.get("/:id", async (req: Request, res: Response) => {
   try {
@@ -33,31 +34,13 @@ router.post("/bulk", async (req: Request, res: Response) => {
 router.post("/filter", async (req: Request, res: Response) => {
   const page = req.body.page;
   const limit = req.body.limit;
+  const sort = req.body.sortBy;
   try {
-      const filters: any = {};
-      const bodyFilters = req.body.filters;
-    for (const key in bodyFilters) {
-      if (
-        typeof bodyFilters[key].value === "string" &&
-        bodyFilters[key].strict === false
-      ) {
-        const regexValue = new RegExp(bodyFilters[key].value, "i");
-        filters[key] = regexValue;
-      } else {
-        filters[key] = bodyFilters[key].value;
-      }
-    }
-    if (req.body.dateBarrier.use) {
-        if (req.body.dateBarrier.after) {
-            filters.createdAt = { $gte: req.body.dateBarrier.value };
-        } else {
-            filters.createdAt = { $lte: req.body.dateBarrier.value };
-        }
-    }
+    const filters = parseFilters(req.body.filters, req.body.dateBarrier);
     const result = await Product.find(filters)
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort(req.body.sortBy)
+      .sort(sort)
       .select("-__v -desc -from")
       .exec();
     res.status(200).json(result);
@@ -65,6 +48,17 @@ router.post("/filter", async (req: Request, res: Response) => {
     res.status(500).json({ error: e });
     console.log(e);
   }
+});
+
+router.post("/count", async (req: Request, res: Response) => {
+    try {
+        const filters = parseFilters(req.body.filters, req.body.dateBarrier);
+        const result = await Product.countDocuments(filters);
+        res.status(200).json({ count: result });
+    } catch (e) {
+        res.status(500).json({ error: e });
+        console.log(e);
+    }
 });
 
 export default router;
