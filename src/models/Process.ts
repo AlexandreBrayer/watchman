@@ -10,7 +10,7 @@ const ProcessModel = new Schema<IProcess>({
         required: true
     },
     flux: {
-        type: Schema.Types.ObjectId || null,
+        type: [Schema.Types.ObjectId] || null,
         ref: "Flux",
     }
 })
