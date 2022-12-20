@@ -6,11 +6,11 @@ import Process from "../models/Process";
 router.get("/", async (req: Request, res: Response) => {
   try {
     const result = await Flux.find();
-        const fluxes = await Promise.all(
-        result.map(async (flux: any) => {
-            const processes = await Process.find({ flux: flux.id });
-            return { ...flux._doc, processes };
-        })
+    const fluxes = await Promise.all(
+      result.map(async (flux: any) => {
+        const processes = await Process.find({ flux: flux.id });
+        return { ...flux._doc, processes };
+      })
     );
     res.status(200).json(fluxes);
   } catch (e) {
@@ -61,11 +61,18 @@ router.post("/filter", async (req: Request, res: Response) => {
         filters[key] = req.body.filters[key].value;
       }
     }
+
     const result = await Flux.find(filters)
       .skip((page - 1) * limit)
       .limit(limit);
+    const fluxes = await Promise.all(
+      result.map(async (flux: any) => {
+        const processes = await Process.find({ flux: flux.id });
+        return { ...flux._doc, processes };
+      })
+    );
 
-    res.status(200).json(result);
+    res.status(200).json(fluxes);
   } catch (e) {
     res.status(500).json({ error: e });
   }
