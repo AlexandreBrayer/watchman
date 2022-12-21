@@ -45,7 +45,6 @@ const ProductModel = new Schema<IProduct>({
     type: Object,
     required: false,
   },
-})
-  .set("timestamps", true);
+}).set("timestamps", true);
 
 export default model("Product", ProductModel);

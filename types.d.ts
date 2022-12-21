@@ -25,3 +25,10 @@ interface IProduct {
   from: ObjectId | null;
   meta: Object;
 }
+
+interface IReport {
+  process: ObjectId;
+  error: Object;
+  executionTime: number;
+  productsFound: number;
+}
