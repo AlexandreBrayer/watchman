@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import Report from "../models/Report";
+import Process from "../models/Process";
 const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
@@ -9,6 +10,7 @@ router.get("/", async (req: Request, res: Response) => {
     const reports = await Report.find()
       .limit(limit * 1)
       .skip((page - 1) * limit)
+      .sort({ createdAt: -1 })
       .exec();
 
     const count = await Report.countDocuments();
@@ -33,13 +35,26 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/lastreport/:idFlux", async (req: Request, res: Response) => {
-  const idFlux = req.params.idFlux;
+router.get("/lastreport/:idProcess", async (req: Request, res: Response) => {
+  const idProcess = req.params.idProcess;
   try {
-    const report = await Report.find({ idFlux: idFlux })
+    const report = await Report.find({ process: idProcess })
       .sort({ createdAt: -1 })
       .limit(1);
     res.status(200).json(report);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
+router.get("/lastfluxreport/:idFlux", async (req: Request, res: Response) => {
+  const idFlux = req.params.idFlux;
+  try {
+    const processes = await Process.find({ flux: idFlux });
+    const reports = await Report.find({ process: { $in: processes } })
+      .sort({ createdAt: -1 })
+      .limit(processes.length);
+    res.status(200).json(reports);
   } catch (e) {
     res.status(500).json({ error: e });
   }
