@@ -1,7 +1,6 @@
 export function parseFilters(filters: any, dateBarrier: any) {
   const parsedFilters: any = {};
   for (const key in filters) {
-    console.log(filters[key].value);
     if (Array.isArray(filters[key].value) && filters[key].strict === false) {
       const regexValues = filters[key].value.map((value: any) => {
         return new RegExp(value, "i");
