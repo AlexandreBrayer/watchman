@@ -5,8 +5,7 @@ import { parseFilters } from "../lib/Filters";
 
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const result = await Product.findById(req.params.id)
-    .populate("from");
+    const result = await Product.findById(req.params.id).populate("from");
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({ error: "Not found" });
@@ -51,14 +50,14 @@ router.post("/filter", async (req: Request, res: Response) => {
 });
 
 router.post("/count", async (req: Request, res: Response) => {
-    try {
-        const filters = parseFilters(req.body.filters, req.body.dateBarrier);
-        const result = await Product.countDocuments(filters);
-        res.status(200).json({ count: result });
-    } catch (e) {
-        res.status(500).json({ error: e });
-        console.log(e);
-    }
+  try {
+    const filters = parseFilters(req.body.filters, req.body.dateBarrier);
+    const result = await Product.countDocuments(filters);
+    res.status(200).json({ count: result });
+  } catch (e) {
+    res.status(500).json({ error: e });
+    console.log(e);
+  }
 });
 
 export default router;
