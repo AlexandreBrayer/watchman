@@ -31,8 +31,8 @@ router.post("/bulk", async (req: Request, res: Response) => {
 });
 
 router.post("/filter", async (req: Request, res: Response) => {
-  const page = req.body.page;
-  const limit = req.body.limit;
+  const page = req.body.page || 1;
+  const limit = req.body.limit || 10;
   const sort = req.body.sortBy;
   try {
     const filters = parseFilters(req.body.filters, req.body.dateBarrier);
@@ -42,7 +42,13 @@ router.post("/filter", async (req: Request, res: Response) => {
       .sort(sort)
       .select("-__v -desc -from")
       .exec();
-    res.status(200).json(result);
+    const count = await Product.countDocuments(filters);
+    const totalPages = Math.ceil(count / limit);
+    res.status(200).json({
+      products: result,
+      totalPages: totalPages,
+      count: count,
+    });
   } catch (e) {
     res.status(500).json({ error: e });
     console.log(e);
