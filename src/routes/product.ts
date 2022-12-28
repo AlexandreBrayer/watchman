@@ -59,19 +59,4 @@ router.post("/filter", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/count", async (req: Request, res: Response) => {
-  try {
-    const filters = parseFilters(
-      req.body.filters,
-      req.body.excFilters,
-      req.body.dateBarrier
-    );
-    const result = await Product.countDocuments(filters);
-    res.status(200).json({ count: result });
-  } catch (e) {
-    res.status(500).json({ error: e });
-    console.log(e);
-  }
-});
-
 export default router;
