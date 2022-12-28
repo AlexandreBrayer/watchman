@@ -35,7 +35,11 @@ router.post("/filter", async (req: Request, res: Response) => {
   const limit = req.body.limit || 10;
   const sort = req.body.sortBy;
   try {
-    const filters = parseFilters(req.body.filters, req.body.dateBarrier);
+    const filters = parseFilters(
+      req.body.filters,
+      req.body.excFilters,
+      req.body.dateBarrier
+    );
     const result = await Product.find(filters)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -57,7 +61,11 @@ router.post("/filter", async (req: Request, res: Response) => {
 
 router.post("/count", async (req: Request, res: Response) => {
   try {
-    const filters = parseFilters(req.body.filters, req.body.dateBarrier);
+    const filters = parseFilters(
+      req.body.filters,
+      req.body.excFilters,
+      req.body.dateBarrier
+    );
     const result = await Product.countDocuments(filters);
     res.status(200).json({ count: result });
   } catch (e) {
