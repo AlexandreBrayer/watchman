@@ -32,3 +32,50 @@ interface IReport {
   executionTime: number;
   productsFound: number;
 }
+
+type filters = {
+  name?: {
+    value: Array<string>;
+    strict: boolean;
+  };
+  ref?: {
+    value: Array<string>;
+    strict: boolean;
+  };
+  brand?: {
+    value: Array<string>;
+    strict: boolean;
+  };
+  url?: {
+    value: Array<string>;
+    strict: boolean;
+  };
+};
+
+type dateBarrier = {
+  after: boolean;
+  value: string;
+};
+
+type mongoFilters = {
+  name?: {
+    $in?: Array<string>;
+    $nin?: Array<string>;
+  };
+  ref?: {
+    $in?: Array<string>;
+    $nin?: Array<string>;
+  };
+  brand?: {
+    $in?: Array<string>;
+    $nin?: Array<string>;
+  };
+  url?: {
+    $in?: Array<string>;
+    $nin?: Array<string>;
+  };
+  createdAt?: {
+    $gte?: string;
+    $lte?: string;
+  };
+};
