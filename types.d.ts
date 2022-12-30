@@ -59,20 +59,20 @@ type dateBarrier = {
 
 type mongoFilters = {
   name?: {
-    $in?: Array<string>;
-    $nin?: Array<string>;
+    $in?: Array<string> | Array<RegExp>;
+    $nin?: Array<string> | Array<RegExp>;
   };
   ref?: {
-    $in?: Array<string>;
-    $nin?: Array<string>;
+    $in?: Array<string> | Array<RegExp>;
+    $nin?: Array<string> | Array<RegExp>;
   };
   brand?: {
-    $in?: Array<string>;
-    $nin?: Array<string>;
+    $in?: Array<string> | Array<RegExp>;
+    $nin?: Array<string> | Array<RegExp>;
   };
   url?: {
-    $in?: Array<string>;
-    $nin?: Array<string>;
+    $in?: Array<string> | Array<RegExp>;
+    $nin?: Array<string> | Array<RegExp>;
   };
   createdAt?: {
     $gte?: string;

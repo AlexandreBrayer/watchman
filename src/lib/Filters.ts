@@ -1,26 +1,39 @@
-export function parseFilters(filters: filters, excFilters: filters, dateBarrier?: dateBarrier) {
-  const parsedFilters: any = {};
+export function parseFilters(
+  filters: filters,
+  excFilters: filters,
+  dateBarrier?: dateBarrier
+) {
+  const parsedFilters: mongoFilters = {};
   for (const key in filters) {
-    if (Array.isArray(filters[key as keyof typeof filters]?.value) && filters[key as keyof typeof filters]?.strict === false) {
-      const regexValues = filters[key as keyof typeof filters]?.value.map((value: any) => {
-        return new RegExp(value, "i");
-      });
-      parsedFilters[key] = { $in: regexValues };
+    if (filters[key as keyof filters]?.strict === false) {
+      const regexValues = filters[key as keyof filters]?.value.map(
+        (value: any) => {
+          return new RegExp(value, "i");
+        }
+      );
+      parsedFilters[key as keyof mongoFilters] = { $in: regexValues };
     } else {
-      parsedFilters[key] = { $in: filters[key as keyof typeof filters]?.value };
+      parsedFilters[key as keyof mongoFilters] = {
+        $in: filters[key as keyof filters]?.value,
+      };
     }
   }
   for (const key in excFilters) {
-    if (
-      Array.isArray(excFilters[key as keyof typeof filters]?.value) &&
-      excFilters[key as keyof typeof filters]?.strict === false
-    ) {
-      const regexValues = excFilters[key as keyof typeof filters]?.value.map((value: any) => {
-        return new RegExp(value, "i");
-      });
-      parsedFilters[key] = {...parsedFilters[key], $nin: regexValues}
+    if (excFilters[key as keyof filters]?.strict === false) {
+      const regexValues = excFilters[key as keyof filters]?.value.map(
+        (value: any) => {
+          return new RegExp(value, "i");
+        }
+      );
+      parsedFilters[key as keyof mongoFilters] = {
+        ...parsedFilters[key as keyof mongoFilters],
+        $nin: regexValues,
+      };
     } else {
-      parsedFilters[key] = {...parsedFilters[key], $nin: excFilters[key as keyof typeof filters]?.value}
+      parsedFilters[key as keyof mongoFilters] = {
+        ...parsedFilters[key as keyof mongoFilters],
+        $nin: excFilters[key as keyof filters]?.value,
+      };
     }
   }
   if (dateBarrier) {
@@ -28,6 +41,6 @@ export function parseFilters(filters: filters, excFilters: filters, dateBarrier?
       ? (parsedFilters.createdAt = { $gte: dateBarrier.value })
       : (parsedFilters.createdAt = { $lte: dateBarrier.value });
   }
-  console.log(parsedFilters)
+  console.log(parsedFilters);
   return parsedFilters;
 }
