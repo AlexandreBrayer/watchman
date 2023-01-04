@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 const router = express.Router();
 import Flux from "../models/Flux";
 import Process from "../models/Process";
+import { authenticateToken } from "../lib/Jwt";
 
 router.get("/", async (req: Request, res: Response) => {
   try {

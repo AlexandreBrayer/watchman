@@ -33,6 +33,11 @@ interface IReport {
   productsFound: number;
 }
 
+interface IUser {
+  username: string;
+  password: string;
+}
+
 type filters = {
   name?: {
     value: Array<string>;

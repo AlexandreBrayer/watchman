@@ -35,6 +35,9 @@ app.use("/images", imagesRoute);
 import reportRoute from "./routes/report";
 app.use("/report", reportRoute);
 
+import userRoute from "./routes/user";
+app.use("/user", userRoute);
+
 app.get("/", async (req, res) => {
     res.json({version: "0.0.1"});
 });
