@@ -4,7 +4,7 @@ import Flux from "../models/Flux";
 import Process from "../models/Process";
 import { authenticateToken } from "../lib/Jwt";
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/",authenticateToken, async (req: Request, res: Response) => {
   try {
     const result = await Flux.find();
     const fluxes = await Promise.all(

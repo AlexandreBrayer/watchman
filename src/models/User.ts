@@ -10,6 +10,11 @@ const UserModel = new Schema<IUser>({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 }).set("timestamps", true);
 
 export default model("User", UserModel);

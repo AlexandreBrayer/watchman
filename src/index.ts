@@ -6,7 +6,6 @@ import bodyParser from "body-parser";
 
 const port = process.env.PORT || 3000;
 const app = express();
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -39,7 +38,7 @@ import userRoute from "./routes/user";
 app.use("/user", userRoute);
 
 app.get("/", async (req, res) => {
-    res.json({version: "0.0.1"});
+  res.json({ version: "0.0.1" });
 });
 
 app.listen(3000, () => {

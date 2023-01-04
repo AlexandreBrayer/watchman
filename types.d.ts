@@ -1,5 +1,11 @@
 declare module "cors";
 
+declare namespace Express {
+  export interface Request {
+    user?: IUser;
+  }
+}
+
 interface IFlux {
   name: string;
   active: boolean;
@@ -35,7 +41,8 @@ interface IReport {
 
 interface IUser {
   username: string;
-  password: string;
+  password?: string;
+  email: string;
 }
 
 type filters = {

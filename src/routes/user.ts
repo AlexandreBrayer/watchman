@@ -17,6 +17,7 @@ router.post("/register", async (req: Request, res: Response) => {
     const user = await User.create({
       username: req.body.username,
       password: hash,
+      email: req.body.email,
     });
     res.status(201).json(user);
   } catch (e) {
@@ -26,13 +27,14 @@ router.post("/register", async (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ username: req.body.username })
+      ;
     if (!user) {
       res.status(401).json({ error: "User not found" });
     } else {
       const match = await bcrypt.compare(req.body.password, user.password);
       if (match) {
-        const token = generateAccessToken(user.username);
+        const token = generateAccessToken(user);
         res.status(200).json({ token });
       } else {
         res.status(401).json({ error: "Wrong password" });
