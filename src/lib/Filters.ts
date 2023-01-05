@@ -41,6 +41,5 @@ export function parseFilters(
       ? (parsedFilters.createdAt = { $gte: dateBarrier.value })
       : (parsedFilters.createdAt = { $lte: dateBarrier.value });
   }
-  console.log(parsedFilters);
   return parsedFilters;
 }
