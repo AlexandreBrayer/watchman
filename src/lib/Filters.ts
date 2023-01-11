@@ -8,6 +8,7 @@ export function parseFilters(
     if (filters[key as keyof filters]?.strict === false) {
       const regexValues = filters[key as keyof filters]?.value.map(
         (value: any) => {
+          value = value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
           return new RegExp(value, "i");
         }
       );
@@ -22,7 +23,6 @@ export function parseFilters(
     if (excFilters[key as keyof filters]?.strict === false) {
       const regexValues = excFilters[key as keyof filters]?.value.map(
         (value: any) => {
-          //escape ., +, *, ?, ^, $, (, ), [, ], {, }, |, \
           value = value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
           return new RegExp(value, "i");
         }
